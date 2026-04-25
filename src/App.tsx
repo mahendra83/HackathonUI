@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import AuthService, {
 	type ApiError,
 	type LoginRequest,
@@ -365,7 +365,7 @@ function App() {
 
 				{view.screen === "edit" && customerId && (
 					<AccountFormScreen
-						key={`edit-${view.selectedAccountId ?? "unknown"}`}
+						key={`edit-${view.selectedAccountId ?? "unknown"}-${detailLoading ? "loading" : "ready"}-${selectedAccount?.updatedAt ?? "new"}`}
 						mode="edit"
 						customerId={customerId}
 						account={selectedAccount}
@@ -815,25 +815,6 @@ function AccountFormScreen({
 			: null,
 	);
 	const [bankLookupLoading, setBankLookupLoading] = useState(false);
-
-	useEffect(() => {
-		setFormData({
-			accountName: account?.accountName ?? "",
-			iban: account?.iban ?? "",
-			bankCode: account?.bankCode ?? 0,
-		});
-		setBankLookup(
-			account
-				? {
-						bankCode: account.bankCode,
-						bankName: account.bankName,
-					}
-				: null,
-		);
-		setErrors({});
-		setApiMessage(null);
-		setBankLookupLoading(false);
-	}, [account, mode, accountId]);
 
 	const derivedBankCode = extractBankCodeFromIban(formData.iban);
 	const effectiveBankCode = bankLookup?.bankCode ?? derivedBankCode ?? formData.bankCode;
